@@ -4,13 +4,12 @@ instruction_for_chat = """
         Please 1st provide your Gemini API befor start chating.
         to clear history type clear_history
         """
-
 # configuration of the gemini ai
 generation_config = {
-          "temperature": 0.4,
+          "temperature": 0.6,
           "top_p": 1,
           "top_k": 1,
-          "max_output_tokens": 1050,
+          "max_output_tokens": 2050,
         }
 safety_settings = [
           {
@@ -31,9 +30,6 @@ safety_settings = [
           },
         ]
 default_clearing_size = 10 # in mb
-USER_API= ""
-# change saving to False to Not save the Chat history to 
-saving = True
 # The text file where the text are gonna store
 default_file = "Previous_chat_histories.txt"
 # a function to save data on a file
@@ -45,12 +41,17 @@ def clear_storage():
         if os.path.getsize(default_file)>= default_clearing_size*(1024**2):
                  with open(default_file,"w") as f:
                     f.write("")
+        else:
+            print(f"Your history size :  {os.path.getsize(default_file)} byte or {os.path.getsize(default_file)/1024} kb")
 # a function to chat with gemini
 def chat_command():
+    # change saving to False to Not save the Chat history to
+    _saving = True
     _instruction =instruction_for_chat
     _config = generation_config
     _setting = safety_settings
     _gemini = True
+    _User_api = " "
     print(_instruction)
     while _gemini:
         prompt = input("Gemini # ")  
@@ -78,9 +79,9 @@ def chat_command():
               del system
         # main chating place where you chat with gemini
             case _:
-                if USER_API == "":
+                if  _User_api == " ":
                         print("Please enter API key 1st")
-                        USER_API = input("ENTER your api key")
+                        _User_api = input("ENTER your api key")
                 else:
                         try:
                                 # importing gemini module , sorry i dont use request may be that saves more memory
@@ -89,15 +90,21 @@ def chat_command():
                                 from os import system
                                 system("pip install google-generativeai")
                                 import google.generativeai as genai
-                        genai.configure(api_key=USER_API)  # setup the api with model
+                        genai.configure(api_key=_User_api)  # setup the api with model
                         model = genai.GenerativeModel('gemini-pro',generation_config=_config,safety_settings=_setting)  # setup the model type
                         response = model.generate_content(f"{prompt}",) # the response from gemini
                         print(response.text.replace('•', '  *'))  # printing the response (i dont use for loop to print chunks of the chats so user now have to wait for long time
-                        if saving != False:
+                        if _saving == True:
                                 save_chat(default_file,"me-> \t"+prompt+": \t \n response -> \t"+response.text+"/n")
-                
+                        else:
+                            pass  
 if(__name__=="__main__"):
         try:
                 chat_command()
         except:
                 print("Error occure may be you type some inappropriate thing LOL,change the safty setting")
+                print("Or else You provides wrong API")
+                print("make sure to replace the _User_API variable with your api instand of manually giving api every time.")
+        finally:
+            clear_storage()  # to clear the history
+exit()
