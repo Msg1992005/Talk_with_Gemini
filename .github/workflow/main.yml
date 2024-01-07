@@ -1,4 +1,4 @@
-name: Python CI/CD
+name: Testing
 
 on: [push]  # Trigger the workflow on every push to the repository
 
