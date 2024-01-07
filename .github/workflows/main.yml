@@ -14,4 +14,4 @@ jobs:
         with:
           python-version: 3.9  
       - name: Run tests  # Execute your Python tests
-        run: python3 main.py
+        run: pytest
