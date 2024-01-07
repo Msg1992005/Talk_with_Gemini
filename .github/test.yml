@@ -1,0 +1,17 @@
+name: Python CI/CD
+
+on: [push]  # Trigger the workflow on every push to the repository
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3  # Checkout the repository code
+
+      - name: Set up Python  # Configure the Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9  
+      - name: Run tests  # Execute your Python tests
+        run: python3 main.py
